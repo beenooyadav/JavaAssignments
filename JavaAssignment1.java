@@ -2,26 +2,31 @@ import java.io.*;
 import java.util.*;
 
 public class JavaAssignment1 {
-	public static void main(String[] args) {
-		String s;
-        	Process p;
-        	try {
-			Scanner  sc=new Scanner(System.in);
-			System.out.println("enter the regular expression to find the file");
-			String ex=sc.next();
-			while(true ){
-            			p = Runtime.getRuntime().exec("find / -name "+ex);
-            			BufferedReader br = new BufferedReader(
-            	        	new InputStreamReader(p.getInputStream()));
-           	        	while ((s = br.readLine()) != null)
-           				System.out.println("file: " + s);
-            			p.waitFor();
-            			System.out.println ("enter next expression or enter 'exit' for exit: " + p.exitValue());
-            			p.destroy();
-				ex=sc.next();
-				if(ex.equals("exit"))
-					break;
-			}
-        	} catch (Exception e) {}
-	}
+
+        static void findFilesPath(String pattern,String dir){
+                File directory = new File(dir);
+                File[] fList = directory.listFiles();
+                if(fList != null){
+                for (File file : fList) {
+                        if (file.isFile() && (file.getName().matches(pattern))){
+                                System.out.println(file.getAbsolutePath());
+                        } else if (file.isDirectory()) {
+                                findFilesPath(pattern,file.getAbsolutePath());
+                        }
+                }
+                }
+        }
+        public static void main(String[] args) {
+                Scanner  sc=new Scanner(System.in);
+                while(true ){
+                        System.out.println("enter the regular expression to find the files or enter exit to exit:");
+                        String ex=sc.next();
+                        if(ex.equals("exit")){
+                                System.exit(0);
+                                sc.close();
+                        }
+                        findFilesPath(ex,"/home");      
+                }
+        } 
 }
+
